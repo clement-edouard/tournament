@@ -1,0 +1,160 @@
+openapi: 3.0.0
+info:
+  title: Tournament
+  description: Here the specification of the different endpoints that make up the Players API
+  contact:
+    email: cedouard.pro@gmail.com
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/swagger
+tags:
+  - name: players
+    description: Access to Players
+paths:
+  /player:
+    get:
+      tags:
+        - players
+      summary: Returns all players
+      description: Returns all players sorted by score
+      operationId: list
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
+    post:
+      tags:
+        - players
+      summary: Create a player
+      description: Create a player with his score
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlayerRequest'
+      responses:
+        '201':
+          description: successful operation
+          headers:
+            player-id:
+              description: Player ID
+              schema:
+                type: string
+                example: 6426ce66af878766a22f3619
+        '400':
+          description: Field(s) pseudo and/or score are missing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Field(s) pseudo and/or score are missing
+        '409':
+          description: Player PlayerName already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Player Clément already exists
+        '500':
+          description: Player creation fail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Player creation fail
+    put:
+      tags:
+        - players
+      summary: Update player score
+      description: Update player score by his id
+      operationId: edit
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                score:
+                  type: integer
+                  example: 42
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Score should be an integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Score should be an integer
+    delete:
+      tags:
+        - players
+      summary: Delete all players
+      description: Delete all players
+      operationId: delete
+      responses:
+        '204':
+          description: No Content
+  /player/rank:
+    get:
+      tags:
+        - players
+      summary: Returns all players with rank
+      description: Returns all players with rank sorted by score
+      operationId: rank
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
+
+components:
+  schemas:
+    Player:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 6426ce66af878766a22f3619
+        pseudo:
+          type: string
+          example: Aurore
+        score:
+          type: integer
+          example: 42
+        rank:
+          type: integer
+          example: 3
+    PlayerRequest:
+      type: object
+      required:
+        - pseudo
+        - score
+      properties:
+        pseudo:
+          type: string
+          example: Aurore
+        score:
+          type: integer
+          example: 3
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Score should be an integer
