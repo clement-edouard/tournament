@@ -14,7 +14,7 @@ If not, launch a MongoDb container with Docker using the following command:
 Clone the project
 
 ```bash
-  git clone https://link-to-project/tournament
+  git clone https://github.com/clement-edouard/tournament.git
 ```
 
 Go to the project directory
